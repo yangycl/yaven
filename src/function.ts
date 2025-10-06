@@ -32,7 +32,11 @@ var readYaIgnore:Function = async ():Promise<string[] | never> => {
 	try {
 		const yaignoreunit8:Uint8Array = await vscode.workspace.fs.readFile(uri);
 		const yaignoretext:string = new TextDecoder().decode(yaignoreunit8);
-		const yaignorearr = yaignoretext.split("\n");
+		const yaignorearr:string[] = yaignoretext
+			.split("\n")
+			.map(line => line.trim())     // 去掉前後空白
+			.filter(line => line.length > 0);  // 避免空行
+		;
 		return yaignorearr;
 	} catch (e:any) {
 		if(e.code === "FileNotFound" || e.code === "ENOENT"){
@@ -60,15 +64,24 @@ export async function initAllChanges(): Promise<Record<string, Filechange>> {
 
 	const result: Record<string, Filechange> = {};
 	const ignorelist:string[] = await readYaIgnore();
+	console.log("ignorelist:", ignorelist);
+	
 	for (const file of allFiles) {
 		
 		const absPath = file.fsPath;
 		const relPath = vscode.workspace.asRelativePath(file); // 存在 .ya.json 裡用相對路徑
+		//忽略設定檔
+		if (relPath === '.yaignore.txt' || relPath === '.ya.json') {
+			continue;
+		}
+
 
 		
 		if(ignorelist.some(pattern => minimatch(relPath, pattern))){
+			console.log(`🚫 忽略: ${relPath}`);
 			continue;
 		}
+		console.log(`✅ 保留: ${relPath}`);
 		try {
 			const doc = await vscode.workspace.openTextDocument(file);
 			const lines = doc.getText().split('\n');
