@@ -1,7 +1,7 @@
 {
   "name": "yaven",
   "displayName": "yaven",
-  "publisher": "alien",
+  "publisher": "yangycl",
   "description": "A simple version control system",
   "version": "0.0.1",
   "engines": {
