@@ -11,6 +11,12 @@
     "Other"
   ],
   "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yangycl/yaven.git"
+  },
+
+  
   "activationEvents": [
     "onCommand:yaven.init",
     "onCommand:yaven.newven"
